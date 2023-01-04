@@ -1,39 +1,37 @@
-node {
-    def app
-
-    stage('Clone repository') {
-      
-
-        checkout scm
-    }
-    
-    agent {
-        
-    label 'docker'
-        
+pipeline {
+  // Assign to docker agent(s) label, could also be 'any'
+  agent {
+    label 'docker' 
   }
-    stage('Build image') {
-  
-       app = docker.build("argo:v2")
+
+  stages {
+    stage('Docker node test') {
+      agent {
+        docker {
+          // Set both label and image
+          label 'docker'
+          image 'node:7-alpine'
+          args '--name docker-node' // list any args
+        }
+      }
+      steps {
+        // Steps run in node:7-alpine docker container on docker agent
+        sh 'node --version'
+      }
     }
 
-    stage('Test image') {
-  
-
-        app.inside {
-            sh 'echo "Tests passed"'
+    stage('Docker maven test') {
+      agent {
+        docker {
+          // Set both label and image
+          label 'docker'
+          image 'maven:3-alpine'
         }
+      }
+      steps {
+        // Steps run in maven:3-alpine docker container on docker agent
+        sh 'mvn --version'
+      }
     }
-
-    stage('Push image') {
-        
-        docker.withRegistry('https://registry.hub.docker.com', '3dac2812-df1d-4c37-b3e1-760df7403a7b') {
-            app.push("${env.BUILD_NUMBER}")
-        }
-    }
-    
-    stage('Trigger ManifestUpdate') {
-                echo "triggering updatemanifestjob"
-                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-        }
+  }
 }
