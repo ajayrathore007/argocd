@@ -6,7 +6,12 @@ node {
 
         checkout scm
     }
-
+    
+    agent {
+        
+    label 'docker'
+        
+  }
     stage('Build image') {
   
        app = docker.build("argo:v2")
