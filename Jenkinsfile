@@ -9,7 +9,7 @@ node {
 
     stage('Build image') {
   
-       app = docker.build("8946855548/ajayr")
+       app = docker.build("argo:v2")
     }
 
     stage('Test image') {
