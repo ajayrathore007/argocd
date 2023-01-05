@@ -19,13 +19,13 @@ node {
             sh 'echo "Tests passed"'
         }
     }
-
+    
     stage('Push image') {
-        
-        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+        withDockerRegistry([ credentialsId: "dockerhub", url: "https://registry.hub.docker.com" ]) {
+        dockerImage.push()
             app.push("${env.BUILD_NUMBER}")
         }
-    }
+    }    
     
     stage('Trigger ManifestUpdate') {
                 echo "triggering updatemanifestjob"
