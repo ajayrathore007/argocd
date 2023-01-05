@@ -9,7 +9,7 @@ node {
 
     stage('Build image') {
   
-       app = docker.build("argov2")
+       app = docker.build("8946855548/argov2")
     }
 
     stage('Test image') {
@@ -21,11 +21,11 @@ node {
     }
     
     stage('Push image') {
-        withDockerRegistry([ credentialsId: "dockerhub", url: "https://registry.hub.docker.com" ]) {
-        dockerImage.push()
-            
+        
+        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+            app.push("${env.BUILD_NUMBER}")
         }
-    }    
+    }
     
     stage('Trigger ManifestUpdate') {
                 echo "triggering updatemanifestjob"
