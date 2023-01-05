@@ -21,7 +21,7 @@ node {
     }
     
     stage('Push image') {
-        withDockerRegistry([ credentialsId: "dockerhub", url: "https://registry.hub.docker.com" ]) {
+        withDockerRegistry([ credentialsId: "dockerhub", url: "8946855548/ajayr" ]) {
         dockerImage.push()
             app.push("${env.BUILD_NUMBER}")
         }
